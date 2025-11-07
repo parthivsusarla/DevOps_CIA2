@@ -49,40 +49,14 @@ pipeline {
                 bat 'docker build -t my-html-app:latest .'
             }
         }
-        
-        stage('Login to AWS ECR') {
-            steps {
-                echo 'Logging in to AWS ECR...'
-                withAWS(credentials: 'aws-creds', region: 'us-east-1') {
-                    bat '''
-                        aws ecr get-login-password --region us-east-1 ^
-                        | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
-                    '''
-                }
-            }
-        }
-        
-        stage('Tag Docker Image') {
-            steps {
-                echo 'Tagging Docker image for ECR...'
-                bat 'docker tag my-html-app:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/devops_cia2_cicd:latest'
-            }
-        }
-        
-        stage('Push to AWS ECR') {
-            steps {
-                echo 'Pushing Docker image to ECR...'
-                bat 'docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/devops_cia2_cicd:latest'
-            }
-        }
     }
     
     post {
         success {
-            echo '✓ Continuous Integration stage completed successfully!'
+            echo 'Continuous Integration stage completed successfully!'
         }
         failure {
-            echo '✗ CI pipeline failed. Check logs.'
+            echo 'CI pipeline failed. Check logs.'
         }
     }
 }
